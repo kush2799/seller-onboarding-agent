@@ -17,6 +17,8 @@ uploaded_file = st.file_uploader(
 )
 
 if uploaded_file:
+    st.write(uploaded_file.name)
+    st.write(uploaded_file.type)
 
     st.success("Document Uploaded")
 
