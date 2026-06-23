@@ -23,11 +23,16 @@ if uploaded_file:
     st.success("Document Uploaded")
 
     if st.button("Extract Details"):
-    
-        model = genai.GenerativeModel("gemini-2.5-flash")
-    
+
+    try:
+        model = genai.GenerativeModel("gemini-1.5-flash")
+
         response = model.generate_content(
-            "Extract GST Number, PAN Number and Company Name from a business document."
+            "Hello"
         )
-    
+
+        st.success("Gemini Connected!")
         st.write(response.text)
+
+    except Exception as e:
+        st.error(str(e))
