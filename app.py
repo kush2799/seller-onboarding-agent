@@ -18,19 +18,21 @@ uploaded_file = st.file_uploader(
 
 if uploaded_file:
 
+    st.write("File Name:", uploaded_file.name)
+    st.write("File Type:", uploaded_file.type)
+
     st.success("Document Uploaded")
 
     if st.button("Extract Details"):
 
         try:
-            model = genai.GenerativeModel("gemini-1.5-flash")
-    
-            response = model.generate_content(
-                "Hello"
-            )
-    
+            # Use latest available model
+            model = genai.GenerativeModel("gemini-2.0-flash")
+
+            response = model.generate_content("Hello")
+
             st.success("Gemini Connected!")
             st.write(response.text)
-    
+
         except Exception as e:
-            st.error(str(e))
+            st.error(f"Error: {str(e)}")
