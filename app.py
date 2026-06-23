@@ -1,4 +1,8 @@
 import streamlit as st
+import google.generativeai as genai
+
+# Configure Gemini
+genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 
 st.set_page_config(
     page_title="Seller Onboarding Agent",
@@ -7,26 +11,44 @@ st.set_page_config(
 
 st.title("📄 Seller Onboarding Agent")
 
-seller_name = st.text_input("Seller Name")
-email = st.text_input("Email")
-phone = st.text_input("Phone Number")
-
-uploaded_files = st.file_uploader(
-    "Upload Documents",
-    accept_multiple_files=True
+uploaded_file = st.file_uploader(
+    "Upload GST Certificate / PAN / Business Document",
+    type=["pdf", "png", "jpg", "jpeg"]
 )
 
-if st.button("Submit"):
+if uploaded_file:
 
-    st.success("Application Submitted")
+    st.success("Document Uploaded")
 
-    st.write("### Summary")
-    st.write("Seller:", seller_name)
-    st.write("Email:", email)
-    st.write("Phone:", phone)
+    if st.button("Extract Details"):
 
-    if uploaded_files:
-        st.write("### Uploaded Documents")
+        file_bytes = uploaded_file.getvalue()
 
-        for file in uploaded_files:
-            st.write(f"✅ {file.name}")
+        model = genai.GenerativeModel("gemini-2.5-flash")
+
+        prompt = """
+        Extract the following details from this document.
+
+        Return ONLY in this format:
+
+        Company Name:
+        GST Number:
+        PAN Number:
+        Address:
+
+        If any field is unavailable, write Not Found.
+        """
+
+        response = model.generate_content(
+            [
+                prompt,
+                {
+                    "mime_type": uploaded_file.type,
+                    "data": file_bytes
+                }
+            ]
+        )
+
+        st.subheader("Extracted Details")
+
+        st.write(response.text)
