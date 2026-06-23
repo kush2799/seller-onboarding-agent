@@ -21,34 +21,11 @@ if uploaded_file:
     st.success("Document Uploaded")
 
     if st.button("Extract Details"):
-
-        file_bytes = uploaded_file.getvalue()
-
+    
         model = genai.GenerativeModel("gemini-2.5-flash")
-
-        prompt = """
-        Extract the following details from this document.
-
-        Return ONLY in this format:
-
-        Company Name:
-        GST Number:
-        PAN Number:
-        Address:
-
-        If any field is unavailable, write Not Found.
-        """
-
+    
         response = model.generate_content(
-            [
-                prompt,
-                {
-                    "mime_type": uploaded_file.type,
-                    "data": file_bytes
-                }
-            ]
+            "Extract GST Number, PAN Number and Company Name from a business document."
         )
-
-        st.subheader("Extracted Details")
-
+    
         st.write(response.text)
